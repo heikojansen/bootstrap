@@ -1538,7 +1538,7 @@ var Dropdown = function () {
 
     // public
 
-    Dropdown.prototype.toggle = function toggle() {
+    Dropdown.prototype.toggle = function toggle(setFocus = true) {
       if (this._element.disabled || $(this._element).hasClass(ClassName.DISABLED)) {
         return;
       }
@@ -1580,7 +1580,7 @@ var Dropdown = function () {
         $('body').children().on('mouseover', null, $.noop);
       }
 
-      this._element.focus();
+      if (setFocus) this._element.focus();
       this._element.setAttribute('aria-expanded', true);
 
       $(this._menu).toggleClass(ClassName.SHOW);
@@ -1615,6 +1615,23 @@ var Dropdown = function () {
         event.stopPropagation();
         _this.toggle();
       });
+      if ( this._config['mouseover'] === true ) {
+        $(this._element).on('mouseenter', function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          if ( !$(_this._element).parent().hasClass(ClassName.SHOW) ) {
+            _this.toggle(false);
+          }
+        });
+
+        $(this._element).parent().on('mouseleave', function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          if ( $(_this._element).parent().hasClass(ClassName.SHOW) ) {
+            _this.toggle(false);
+          }
+        });
+      }
     };
 
     Dropdown.prototype._getConfig = function _getConfig(config) {
